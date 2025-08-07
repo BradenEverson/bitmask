@@ -3,6 +3,12 @@ const std = @import("std");
 pub fn Bitmask(comptime size: u16) type {
     return packed struct {
         bits: std.meta.Int(.unsigned, size),
+
+        const Self = @This();
+
+        pub fn init() Self {
+            return Self{ .bits = 0 };
+        }
     };
 }
 
