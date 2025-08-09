@@ -46,3 +46,19 @@ test "setting a bit" {
     mask.set(0);
     try std.testing.expectEqual(1, mask.bits);
 }
+
+test "ALL bitmask sizes" {
+    // Works for all values of a u16 (source: trust me bro unless you wanna
+    // increase the branch count with `@setEvalBranchQuota()`
+    comptime for (1..100) |i| {
+        var mask = Bitmask(i).init();
+        mask.set(0);
+        try std.testing.expectEqual(1, mask.bits);
+    };
+}
+
+test "Min bitmask size for large values" {
+    var mask = Bitmask(5200).init();
+    mask.set(0);
+    try std.testing.expectEqual(1, mask.bits);
+}
