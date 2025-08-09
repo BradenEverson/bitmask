@@ -20,13 +20,18 @@ pub fn Bitmask(comptime size: u16) type {
 
         const Self = @This();
         const IntType = std.meta.Int(.unsigned, size);
+        const IntForShifts = std.meta.Int(.unsigned, minBitsForInt(size - 1));
 
         pub fn init() Self {
             return Self{ .bits = 0 };
         }
 
-        pub fn set(self: *Self, idx: std.meta.Int(.unsigned, minBitsForInt(size - 1))) void {
+        pub fn set(self: *Self, idx: IntForShifts) void {
             self.bits |= @as(IntType, 1) << idx;
+        }
+
+        pub fn get(self: *const Self, idx: IntForShifts) bool {
+            return self.bits >> idx & 0x01 == 1;
         }
     };
 }
@@ -61,4 +66,15 @@ test "Min bitmask size for large values" {
     var mask = Bitmask(5200).init();
     mask.set(0);
     try std.testing.expectEqual(1, mask.bits);
+}
+
+test "Getting a false flag" {
+    const mask = Bitmask(16).init();
+    try std.testing.expectEqual(false, mask.get(0));
+}
+
+test "Getting a true flag" {
+    var mask = Bitmask(16).init();
+    mask.set(10);
+    try std.testing.expectEqual(true, mask.get(10));
 }
