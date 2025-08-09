@@ -1,6 +1,20 @@
 const std = @import("std");
 
+fn minBitsForInt(comptime bits: u16) comptime_int {
+    var min_bits = 1;
+
+    while (std.math.maxInt(std.meta.Int(.unsigned, min_bits)) < bits) {
+        min_bits += 1;
+    }
+
+    return min_bits;
+}
+
 pub fn Bitmask(comptime size: u16) type {
+    if (size == 0) {
+        @compileError("Why would you want to create a zero-flag bitflag?\n");
+    }
+
     return packed struct {
         bits: IntType,
 
@@ -11,7 +25,7 @@ pub fn Bitmask(comptime size: u16) type {
             return Self{ .bits = 0 };
         }
 
-        pub fn set(self: *Self, idx: comptime_int) void {
+        pub fn set(self: *Self, idx: std.meta.Int(.unsigned, minBitsForInt(size - 1))) void {
             self.bits |= @as(IntType, 1) << idx;
         }
     };
