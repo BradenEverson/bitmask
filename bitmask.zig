@@ -10,6 +10,8 @@ fn minBitsForInt(comptime bits: u16) comptime_int {
     return min_bits;
 }
 
+/// Creates a bitmask of some size from 1 to the maximum u16 size
+/// Represented by a comptime sized integer
 pub fn Bitmask(comptime size: u16) type {
     if (size == 0) {
         @compileError("Why would you want to create a zero-flag bitflag?\n");
@@ -22,14 +24,17 @@ pub fn Bitmask(comptime size: u16) type {
         const IntType = std.meta.Int(.unsigned, size);
         const IntForShifts = std.meta.Int(.unsigned, minBitsForInt(size - 1));
 
+        /// Initializes all fields in the bitmask to 0
         pub fn init() Self {
             return Self{ .bits = 0 };
         }
 
+        /// Sets a certain bit in the bitmask
         pub fn set(self: *Self, idx: IntForShifts) void {
             self.bits |= @as(IntType, 1) << idx;
         }
 
+        /// Returns true or false depending on whether the selected bit is turned on
         pub fn get(self: *const Self, idx: IntForShifts) bool {
             return self.bits >> idx & 0x01 == 1;
         }
