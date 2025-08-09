@@ -1,1 +1,10 @@
-Cute Lil Bitfield
+Cute Lil Bitmask
+
+Represented by a big int ranging from 0-max u16 using `std.meta.Int`
+
+Provides:
+- Initialization
+- Setting flags
+- Getting flags
+
+- A bunch of tests :)
